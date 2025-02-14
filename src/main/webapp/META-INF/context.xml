@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/contactsDB"
+              auth="Container"
+              type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              testOnBorrow="true"
+              testWhileIdle="true"
+              testOnReturn="false"
+              validationQuery="SELECT 1"
+              timeBetweenEvictionRunsMillis="30000"
+              minEvictableIdleTimeMillis="30000"
+              maxTotal="100"
+              maxIdle="50"
+              minIdle="10"
+              maxWaitMillis="10000"
+              initialSize="10"
+              username="api"
+              password="Jubilee@123"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/contactsDB?useSSL=false&amp;allowPublicKeyRetrieval=True&amp;serverTimezone=UTC&amp;useLegacyDatetimeCode=false"/>
+</Context>
