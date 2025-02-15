@@ -31,34 +31,42 @@ public class ContactServiceImpl implements ContactServiceI{
         contact.setMaskedName(contact.maskName(contactDTO.getFullName()));
         contact.setMaskedPhone(contact.maskPhone(contactDTO.getPhoneNumber()));
         contact.setHashedPhone(contact.hashPhone(contactDTO.getPhoneNumber()));
-
-        return contactDAO.createContact(contact);
+        int contactID = contactDAO.createContact(contact);
+        contact.setId(contactID);
+        return contact;
     }
 
     @Override
-    public void updateContact(int id, ContactDTO contactDTO) {
-
-
-//        contactDAO.updateContact(id, new Contact(
-//                id,
-//
-//        ))
-
+    public boolean updateContact(int id, ContactDTO contactDTO) throws Exception {
+        //already checked existence
+        Contact contact = new Contact();
+        contact.setId(id);
+        contact.setFullName(contactDTO.getFullName());
+        contact.setPhoneNumber(contactDTO.getPhoneNumber());
+        contact.setEmail(contactDTO.getEmail());
+        contact.setIdNumber(contactDTO.getIdNumber());
+        contact.setDob(contactDTO.getDob());
+        contact.setGender(contactDTO.getGender());
+        contact.setOrganization(contactDTO.getOrganization());
+        contact.setMaskedName(contact.maskName(contactDTO.getFullName()));
+        contact.setMaskedPhone(contact.maskPhone(contactDTO.getPhoneNumber()));
+        contact.setHashedPhone(contact.hashPhone(contactDTO.getPhoneNumber()));
+        return contactDAO.updateContact(id, contact);
     }
 
     @Override
-    public void getContact() {
-
+    public Contact getContactById(int id) throws Exception {
+        return contactDAO.queryById(id);
     }
 
     @Override
-    public void getAllContacts() {
-
+    public List<Contact> getAllContacts() throws Exception {
+        return contactDAO.queryForAllContacts();
     }
 
     @Override
-    public void deleteContact() {
-
+    public boolean deleteContact(int id) throws Exception {
+        return contactDAO.deleteContact(id);
     }
 
     @Override
@@ -79,5 +87,10 @@ public class ContactServiceImpl implements ContactServiceI{
     @Override
     public Contact getContactByIdNumber(String idNumber) throws Exception {
         return  contactDAO.queryByIdNumber(idNumber);
+    }
+
+    @Override
+    public List<Contact> searchContactsByHashedPhoneMaskedNameMaskedPhone(String hashedPhone, String maskedName, String maskedPhone) throws Exception {
+        return contactDAO.searchContact(hashedPhone, maskedName, maskedPhone);
     }
 }

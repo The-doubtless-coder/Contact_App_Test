@@ -1,10 +1,8 @@
 package contact.registry.webservice.contact_registry_crud_apis_rest.repository;
 
 import contact.registry.webservice.contact_registry_crud_apis_rest.model.Contact;
+import contact.registry.webservice.contact_registry_crud_apis_rest.util.DBUtil;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,11 +79,12 @@ public class ContactDAOImpl implements ContactDAO {
     }
 
     @Override
-    public Contact createContact(Contact contact) throws Exception {
+    public int createContact(Contact contact) throws Exception {
+        int affectedRows = 0;
         try (Connection conn = DBUtil.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "INSERT INTO contacts (full_name, phone_number, email, id_number, dob, gender, organization, masked_name, masked_phone, hashed_phone) " +
-                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id")) {
+                             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, contact.getFullName());
             stmt.setString(2, contact.getPhoneNumber());
             stmt.setString(3, contact.getEmail());
@@ -96,18 +95,26 @@ public class ContactDAOImpl implements ContactDAO {
             stmt.setString(8, contact.getMaskedName());
             stmt.setString(9, contact.getMaskedPhone());
             stmt.setString(10, contact.getHashedPhone());
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                contact.setId(rs.getInt("id"));
+            affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                return affectedRows;
+            }
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    affectedRows = generatedKeys.getInt(1);
+                } else {
+                    affectedRows = -1;
+                }
             }
         } catch (SQLException e) {
             throw  new Exception("Error catch in repository " + e.getMessage());
         }
-        return contact;
+        return affectedRows;
     }
 
     @Override
     public boolean updateContact(int id, Contact contact) throws Exception {
+        boolean isUpdated = false;
         try (Connection conn = DBUtil.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "UPDATE contacts SET full_name=?, phone_number=?, email=?, id_number=?, dob=?, gender=?, organization=?, masked_name=?, masked_phone=?, hashed_phone=? " +
@@ -124,13 +131,13 @@ public class ContactDAOImpl implements ContactDAO {
             stmt.setString(10, contact.getHashedPhone());
             stmt.setInt(11, id);
             int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated == 0) {
-                throw new Exception("Contact not found");
+            if (rowsUpdated > 0) {
+                isUpdated = true;
             }
         } catch (SQLException e) {
             throw new Exception("Database error " + e.getMessage());
         }
-        return true;
+        return isUpdated;
     }
 
     @Override
@@ -141,11 +148,11 @@ public class ContactDAOImpl implements ContactDAO {
             stmt.setInt(1, id);
             int rowsDeleted = stmt.executeUpdate();
             if (rowsDeleted == 0) {
-                throw new Exception("Contact not found");
+                return result;
             }
             result = true;
         } catch (SQLException e) {
-            throw new Exception("Database error");
+            throw new Exception("Database error at repository " + e.getMessage());
         }
         return result;
     }
@@ -200,6 +207,9 @@ public class ContactDAOImpl implements ContactDAO {
             params.add(maskedPhone);
         }
 
+        if(params.isEmpty()){
+            return contactList;//never return the whole table contents//contents must be filtered
+        }
         try (Connection conn = DBUtil.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -290,6 +300,34 @@ public class ContactDAOImpl implements ContactDAO {
         try (Connection conn = DBUtil.getDataSource().getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, idNumber);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                return new Contact(
+                        rs.getInt("id"),
+                        rs.getString("full_name"),
+                        rs.getString("phone_number"),
+                        rs.getString("email"),
+                        rs.getString("id_number"),
+                        rs.getString("dob"),
+                        rs.getString("gender"),
+                        rs.getString("organization"),
+                        rs.getString("masked_name"),
+                        rs.getString("masked_phone"),
+                        rs.getString("hashed_phone")
+                );
+            }
+        } catch (SQLException e) {
+            throw new Exception("Database Error Contact Admin");
+        }
+        return null;
+    }
+
+    @Override
+    public Contact queryById(int id) throws Exception {
+        String query = "SELECT * FROM contacts WHERE id = ?";
+        try (Connection conn = DBUtil.getDataSource().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 return new Contact(

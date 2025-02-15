@@ -1,7 +1,6 @@
 package contact.registry.webservice.contact_registry_crud_apis_rest;
 
 import contact.registry.webservice.contact_registry_crud_apis_rest.model.Contact;
-import contact.registry.webservice.contact_registry_crud_apis_rest.service.ContactServiceI;
 import contact.registry.webservice.contact_registry_crud_apis_rest.service.ContactServiceImpl;
 
 import javax.ws.rs.GET;

@@ -9,15 +9,13 @@ import java.util.List;
 public interface ContactServiceI {
 
     public Contact createContact(ContactDTO contactDTO) throws Exception;
-    public void updateContact(int id, ContactDTO contactDTO);
-    public void getContact();
-    public void getAllContacts();
-    public void deleteContact();
+    public boolean updateContact(int id, ContactDTO contactDTO) throws Exception;
+    public Contact getContactById(int id) throws Exception;
+    public List<Contact> getAllContacts() throws Exception;
+    public boolean deleteContact(int id) throws Exception;
     public List<Contact> getContactsByOrgName(String orgName) throws Exception;
     public Contact getContactsPhoneNumber(String phoneNumber) throws Exception;
     public Contact getContactsByEmail(String email) throws Exception;
     public Contact getContactByIdNumber(String idNumber) throws Exception;
-
-
-
+    public List<Contact> searchContactsByHashedPhoneMaskedNameMaskedPhone(String hashedPhone, String maskedName, String maskedPhone) throws Exception;
 }

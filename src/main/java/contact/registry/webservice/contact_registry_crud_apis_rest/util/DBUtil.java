@@ -1,4 +1,4 @@
-package contact.registry.webservice.contact_registry_crud_apis_rest.repository;
+package contact.registry.webservice.contact_registry_crud_apis_rest.util;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
