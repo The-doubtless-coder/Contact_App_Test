@@ -50,7 +50,11 @@ public class ContactResource {
                    "Creating contacts failed, no rows affected"
                 )).build();
             } else return Response.status(Response.Status.CREATED).entity(
-                    contact
+                    new StatusDTO(
+                            200,
+                            "OK",
+                            "Contact created successfully"
+                    )
             ).build();
         }catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
