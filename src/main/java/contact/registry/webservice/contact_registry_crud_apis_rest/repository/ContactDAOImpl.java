@@ -349,4 +349,69 @@ public class ContactDAOImpl implements ContactDAO {
         }
         return null;
     }
+
+    //    OR id_number = ?, phone_number = ?)
+    @Override
+    public boolean existsByEmail(String email, int id) throws Exception {
+        String sql = "SELECT COUNT(*) FROM contacts WHERE (email = ? )  AND id <> ?";
+        try (Connection conn = DBUtil.getDataSource().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+//            ps.setString(2, IdNumber);
+//            ps.setString(3, phone);
+            ps.setInt(2, id); // Exclude the record being updated
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // If count > 0, duplicate exists
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Database Error Contact Admin");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean existsByIdNumber(String IdNumber, int id) throws Exception {
+        String sql = "SELECT COUNT(*) FROM contacts WHERE (id_number = ? )  AND id <> ?";
+        try (Connection conn = DBUtil.getDataSource().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, IdNumber);
+//            ps.setString(2, IdNumber);
+//            ps.setString(3, phone);
+            ps.setInt(2, id); // Exclude the record being updated
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // If count > 0, duplicate exists
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Database Error Contact Admin");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean existsByPhone(String phone, int id) throws Exception {
+        String sql = "SELECT COUNT(*) FROM contacts WHERE (phone_number = ? )  AND id <> ?";
+        try (Connection conn = DBUtil.getDataSource().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+//            ps.setString(2, IdNumber);
+//            ps.setString(3, phone);
+            ps.setInt(2, id); // Exclude the record being updated
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // If count > 0, duplicate exists
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Database Error Contact Admin");
+        }
+        return false;
+    }
+
 }

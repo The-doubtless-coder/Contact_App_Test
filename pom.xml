@@ -40,6 +40,7 @@
     </dependency>
 
 
+<!--    soap ws-->
     <dependency>
       <groupId>com.sun.xml.ws</groupId>
       <artifactId>jaxws-rt</artifactId>

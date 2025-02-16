@@ -16,4 +16,8 @@ public interface ContactDAO {
     public Contact queryByEmail(String email) throws Exception;
     public Contact queryByIdNumber(String idNumber) throws Exception;
     public Contact queryById(int id) throws Exception;
+    public boolean existsByEmail(String email, int id) throws Exception;
+    public boolean existsByIdNumber(String IdNumber, int id) throws Exception;
+    public boolean existsByPhone(String phone, int id) throws Exception;
+
 }

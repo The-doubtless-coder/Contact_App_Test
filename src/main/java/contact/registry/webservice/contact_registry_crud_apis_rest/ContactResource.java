@@ -5,7 +5,6 @@ import contact.registry.webservice.contact_registry_crud_apis_rest.dto.StatusDTO
 import contact.registry.webservice.contact_registry_crud_apis_rest.model.Contact;
 import contact.registry.webservice.contact_registry_crud_apis_rest.service.ContactServiceImpl;
 
-import javax.annotation.Resource;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,27 +20,27 @@ public class ContactResource {
     public Response createContact(ContactDTO contactDTO){
         //email unique, idN unique, phone unique = return 400 otherwise
         try{
-            Contact contactByIdNumber = contactService.getContactByIdNumber(contactDTO.getIdNumber());
-            Contact contactsByEmail = contactService.getContactsByEmail(contactDTO.getEmail());
-            Contact contactsPhoneNumber = contactService.getContactsPhoneNumber(contactDTO.getPhoneNumber());
-            if(contactByIdNumber!=null){
+            boolean existsByIdNumber= contactService.existsByIdNumber(contactDTO.getIdNumber(), 0);
+            boolean existsByEmail = contactService.existsByEmail(contactDTO.getEmail(), 0);
+            boolean existsByPhone = contactService.existsByPhone(contactDTO.getPhoneNumber(), 0);
+            if(existsByIdNumber){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with ID number " + contactByIdNumber.getIdNumber() + " already exists"
+                        "Contact with ID number " + contactDTO.getIdNumber() + " already exists"
                 )).build();
             }
-            if(contactsByEmail!=null){
+            if(existsByEmail){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with Email " + contactsByEmail.getEmail() + " already exists")).build();
+                        "Contact with Email " + contactDTO.getEmail() + " already exists")).build();
             }
-            if(contactsPhoneNumber!=null){
+            if(existsByPhone){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with Phone Number " + contactsPhoneNumber.getPhoneNumber() + " already exists")).build();
+                        "Contact with Phone Number " + contactDTO.getPhoneNumber() + " already exists")).build();
             }
             Contact contact = contactService.createContact(contactDTO);
             if(contact.getId()==0 || contact.getId()==-1){
@@ -124,27 +123,27 @@ public class ContactResource {
             //email is unique
             //id number is unique
             //phone number is unique
-            Contact contactByIdNumber = contactService.getContactByIdNumber(contactDTO.getIdNumber());
-            Contact contactsByEmail = contactService.getContactsByEmail(contactDTO.getEmail());
-            Contact contactsPhoneNumber = contactService.getContactsPhoneNumber(contactDTO.getPhoneNumber());
-            if(contactByIdNumber!=null){
+            boolean existsByEmail = contactService.existsByEmail(contactDTO.getEmail(), id);
+            boolean existsByIdNumber = contactService.existsByIdNumber(contactDTO.getIdNumber(), id);
+            boolean existsByPhone = contactService.existsByPhone(contactDTO.getPhoneNumber(), id);
+            if(existsByIdNumber){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with ID number " + contactByIdNumber.getIdNumber() + " already exists"
+                        "Contact with ID number " + contactDTO.getIdNumber() + " already exists"
                 )).build();
             }
-            if(contactsByEmail!=null){
+            if(existsByEmail){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with Email " + contactsByEmail.getEmail() + " already exists")).build();
+                        "Contact with Email " + contactDTO.getEmail() + " already exists")).build();
             }
-            if(contactsPhoneNumber!=null){
+            if(existsByPhone){
                 return Response.status(Response.Status.CONFLICT).entity(new StatusDTO(
                         409,
                         "409 CONFLICT",
-                        "Contact with Phone Number " + contactsPhoneNumber.getPhoneNumber() + " already exists")).build();
+                        "Contact with Phone Number " + contactDTO.getPhoneNumber() + " already exists")).build();
             }
             //continue with updates
             if(contactService.updateContact(id, contactDTO)){

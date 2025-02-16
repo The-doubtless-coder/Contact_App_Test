@@ -93,4 +93,19 @@ public class ContactServiceImpl implements ContactServiceI{
     public List<Contact> searchContactsByHashedPhoneMaskedNameMaskedPhone(String hashedPhone, String maskedName, String maskedPhone) throws Exception {
         return contactDAO.searchContact(hashedPhone, maskedName, maskedPhone);
     }
+
+    @Override
+    public boolean existsByEmail(String email, int id) throws Exception {
+        return contactDAO.existsByEmail(email, id);
+    }
+
+    @Override
+    public boolean existsByIdNumber(String IdNumber, int id) throws Exception {
+        return contactDAO.existsByIdNumber(IdNumber, id);
+    }
+
+    @Override
+    public boolean existsByPhone(String phone, int id) throws Exception {
+        return contactDAO.existsByPhone(phone, id);
+    }
 }

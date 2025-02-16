@@ -18,4 +18,8 @@ public interface ContactServiceI {
     public Contact getContactsByEmail(String email) throws Exception;
     public Contact getContactByIdNumber(String idNumber) throws Exception;
     public List<Contact> searchContactsByHashedPhoneMaskedNameMaskedPhone(String hashedPhone, String maskedName, String maskedPhone) throws Exception;
+    public boolean existsByEmail(String email, int id) throws Exception;
+    public boolean existsByIdNumber(String IdNumber, int id) throws Exception;
+    public boolean existsByPhone(String phone, int id) throws Exception;
+
 }
